@@ -23,7 +23,7 @@ __export(main_exports, {
   WISEMIND_ICON_ID: () => WISEMIND_ICON_ID,
   WISEMIND_OBSIDIAN_ICON: () => WISEMIND_OBSIDIAN_ICON,
   WISEMIND_VIEW_TYPE: () => WISEMIND_VIEW_TYPE,
-  default: () => WiseMindObsidianPlugin2
+  default: () => WiseMindSyncPlugin2
 });
 module.exports = __toCommonJS(main_exports);
 var import_obsidian3 = require("obsidian");
@@ -264,7 +264,7 @@ var WiseMindSettingTab = class extends import_obsidian.PluginSettingTab {
   display() {
     const { containerEl } = this;
     containerEl.empty();
-    containerEl.createEl("h2", { text: "WiseMindAI Obsidian \u8BBE\u7F6E" });
+    containerEl.createEl("h2", { text: "WiseMindAI Sync \u8BBE\u7F6E" });
     new import_obsidian.Setting(containerEl).setName("WiseMindAI \u672C\u5730\u63A5\u53E3\u5730\u5740").setDesc("\u9ED8\u8BA4\u662F WiseMindAI Local API v2 \u5730\u5740\u3002").addText(
       (text) => text.setPlaceholder(DEFAULT_SETTINGS.apiBaseUrl).setValue(this.plugin.settings.apiBaseUrl).onChange(async (value) => {
         this.plugin.settings.apiBaseUrl = value.trim() || DEFAULT_SETTINGS.apiBaseUrl;
@@ -303,7 +303,7 @@ var WiseMindStatusBar = class {
   el;
   constructor(el, onClick) {
     this.el = el;
-    this.el.addClass("wisemind-bridge-status");
+    this.el.addClass("wisemind-sync-status");
     this.el.onclick = onClick;
     this.setDisconnected();
   }
@@ -943,7 +943,7 @@ var runWiseMindToObsidianImport = async (options) => {
 };
 
 // src/syncView.ts
-var WiseMindBridgeView = class extends import_obsidian2.ItemView {
+var WiseMindSyncView = class extends import_obsidian2.ItemView {
   plugin;
   obsidianItems = [];
   wiseMindItems = [];
@@ -982,7 +982,7 @@ var WiseMindBridgeView = class extends import_obsidian2.ItemView {
     return WISEMIND_VIEW_TYPE;
   }
   getDisplayText() {
-    return "WiseMindAI Obsidian";
+    return "WiseMindAI Sync";
   }
   getIcon() {
     return WISEMIND_ICON_ID;
@@ -1074,13 +1074,13 @@ var WiseMindBridgeView = class extends import_obsidian2.ItemView {
   renderShell() {
     const root = this.contentEl;
     root.empty();
-    root.addClass("wisemind-bridge-view");
-    const header = root.createDiv({ cls: "wisemind-bridge-header" });
-    header.appendChild(createInlineIcon(this.getIconSvg("wisemindai-logo.svg"), "WiseMindAI Obsidian", "wisemind-bridge-icon"));
+    root.addClass("wisemind-sync-view");
+    const header = root.createDiv({ cls: "wisemind-sync-header" });
+    header.appendChild(createInlineIcon(this.getIconSvg("wisemindai-logo.svg"), "WiseMindAI Sync", "wisemind-sync-icon"));
     const titleWrap = header.createDiv();
-    titleWrap.createEl("h2", { text: "WiseMindAI Obsidian" });
-    titleWrap.createDiv({ cls: "wisemind-bridge-muted", text: "\u9009\u62E9\u65B9\u5411\u548C\u8303\u56F4\u540E\u6267\u884C\u540C\u6B65\u3002" });
-    const headerActions = header.createDiv({ cls: "wisemind-bridge-header-actions" });
+    titleWrap.createEl("h2", { text: "WiseMindAI Sync" });
+    titleWrap.createDiv({ cls: "wisemind-sync-muted", text: "\u9009\u62E9\u65B9\u5411\u548C\u8303\u56F4\u540E\u6267\u884C\u540C\u6B65\u3002" });
+    const headerActions = header.createDiv({ cls: "wisemind-sync-header-actions" });
     headerActions.append(
       createTextButton("\u53F3\u952E\u83DC\u5355\u8BBE\u7F6E", () => void this.openContextMenuSettings(), this.getIconSvg("document.svg")),
       createTextButton("API \u8BBE\u7F6E", () => void this.openApiSettings(), this.getIconSvg("pencil-square.svg")),
@@ -1089,11 +1089,11 @@ var WiseMindBridgeView = class extends import_obsidian2.ItemView {
         window.open("https://wisemindai.app", "_blank", "noopener,noreferrer");
       }, this.getIconSvg("home.svg"))
     );
-    this.statsEl = root.createDiv({ cls: "wisemind-bridge-summary" });
-    this.tabsEl = root.createDiv({ cls: "wisemind-bridge-direction-tabs" });
-    this.planBarEl = root.createDiv({ cls: "wisemind-bridge-plan-bar" });
-    this.toolbarEl = root.createDiv({ cls: "wisemind-bridge-toolbar" });
-    this.flowEl = root.createDiv({ cls: "wisemind-bridge-flow" });
+    this.statsEl = root.createDiv({ cls: "wisemind-sync-summary" });
+    this.tabsEl = root.createDiv({ cls: "wisemind-sync-direction-tabs" });
+    this.planBarEl = root.createDiv({ cls: "wisemind-sync-plan-bar" });
+    this.toolbarEl = root.createDiv({ cls: "wisemind-sync-toolbar" });
+    this.flowEl = root.createDiv({ cls: "wisemind-sync-flow" });
   }
   renderDynamic() {
     this.renderStats();
@@ -1134,7 +1134,7 @@ var WiseMindBridgeView = class extends import_obsidian2.ItemView {
   }
   renderDirectionTab(direction, text, icon) {
     const button = document.createElement("button");
-    button.className = `wisemind-bridge-tab${this.direction === direction ? " is-active" : ""}`;
+    button.className = `wisemind-sync-tab${this.direction === direction ? " is-active" : ""}`;
     button.append(createInlineIcon(icon, text), document.createTextNode(text));
     button.onclick = () => {
       this.direction = direction;
@@ -1148,25 +1148,25 @@ var WiseMindBridgeView = class extends import_obsidian2.ItemView {
     this.toolbarEl.empty();
     this.toolbarEl.append(createButton("\u5237\u65B0\u6570\u636E", () => this.refresh(), "secondary", this.getIconSvg("arrow-path.svg")));
     this.toolbarEl.append(createButton("\u540C\u6B65\u5386\u53F2", () => this.openHistory(), "secondary", this.getIconSvg("clock.svg")));
-    const hint = this.toolbarEl.createDiv({ cls: "wisemind-bridge-muted" });
+    const hint = this.toolbarEl.createDiv({ cls: "wisemind-sync-muted" });
     hint.setText(
       this.direction === "to-wisemind" ? `\u5DF2\u9009 ${this.selectedObsidian.size} \u7BC7 Obsidian \u7B14\u8BB0\uFF0C\u76EE\u6807\uFF1A${this.getSelectedTargetLabels()}` : `\u5DF2\u9009 ${this.getSelectedWiseMindForActiveCategory().length} \u6761 WiseMindAI \u5185\u5BB9\uFF0C\u76EE\u6807\uFF1A${this.selectedObsidianTargetFolders.size} \u4E2A\u6587\u4EF6\u5939`
     );
   }
   openApiSettings() {
     const overlay = this.createDialog("API \u8BBE\u7F6E");
-    const modal = overlay.querySelector(".wisemind-bridge-dialog");
-    const intro = modal.createDiv({ cls: "wisemind-bridge-tutorial-intro" });
+    const modal = overlay.querySelector(".wisemind-sync-dialog");
+    const intro = modal.createDiv({ cls: "wisemind-sync-tutorial-intro" });
     intro.createEl("strong", { text: "WiseMindAI \u672C\u5730\u63A5\u53E3\u5730\u5740" });
     intro.createEl("span", { text: "\u5982\u679C\u4F60\u4FEE\u6539\u8FC7 WiseMindAI \u672C\u5730\u63A5\u53E3\u5730\u5740\uFF0C\u53EF\u4EE5\u5728\u8FD9\u91CC\u8C03\u6574\u3002\u9ED8\u8BA4\u5730\u5740\u901A\u5E38\u4E0D\u9700\u8981\u6539\u3002" });
     intro.createEl("span", { text: "\u4F7F\u7528\u524D\u8BF7\u5728 WiseMindAI \u5DE6\u4E0B\u89D2\u6253\u5F00\u8BBE\u7F6E\uFF0C\u8FDB\u5165\u300C\u7CFB\u7EDF\u8BBE\u7F6E\u300D->\u300C\u672C\u5730 API \u670D\u52A1\u300D\uFF0C\u5F00\u542F\u670D\u52A1\u540E\u518D\u8FDE\u63A5\u3002" });
-    const form = modal.createDiv({ cls: "wisemind-bridge-api-form" });
+    const form = modal.createDiv({ cls: "wisemind-sync-api-form" });
     const input = form.createEl("input", {
-      cls: "wisemind-bridge-plan-name",
+      cls: "wisemind-sync-plan-name",
       attr: { placeholder: DEFAULT_SETTINGS.apiBaseUrl }
     });
     input.value = this.plugin.settings.apiBaseUrl || DEFAULT_SETTINGS.apiBaseUrl;
-    const status = form.createDiv({ cls: "wisemind-bridge-muted", text: `\u5F53\u524D\uFF1A${this.plugin.settings.apiBaseUrl || DEFAULT_SETTINGS.apiBaseUrl}` });
+    const status = form.createDiv({ cls: "wisemind-sync-muted", text: `\u5F53\u524D\uFF1A${this.plugin.settings.apiBaseUrl || DEFAULT_SETTINGS.apiBaseUrl}` });
     const getValidatedUrl = () => {
       const value = input.value.trim() || DEFAULT_SETTINGS.apiBaseUrl;
       const normalized = normalizeBaseUrl(value);
@@ -1176,7 +1176,7 @@ var WiseMindBridgeView = class extends import_obsidian2.ItemView {
       }
       return normalized;
     };
-    const actions = modal.createDiv({ cls: "wisemind-bridge-dialog-actions" });
+    const actions = modal.createDiv({ cls: "wisemind-sync-dialog-actions" });
     actions.append(
       createTextButton("\u6D4B\u8BD5\u8FDE\u63A5", async () => {
         try {
@@ -1214,12 +1214,12 @@ var WiseMindBridgeView = class extends import_obsidian2.ItemView {
   }
   async openContextMenuSettings() {
     const overlay = this.createDialog("\u53F3\u952E\u83DC\u5355\u8BBE\u7F6E");
-    const modal = overlay.querySelector(".wisemind-bridge-dialog");
-    modal.addClass("wisemind-bridge-context-settings-dialog");
-    const intro = modal.createDiv({ cls: "wisemind-bridge-tutorial-intro" });
+    const modal = overlay.querySelector(".wisemind-sync-dialog");
+    modal.addClass("wisemind-sync-context-settings-dialog");
+    const intro = modal.createDiv({ cls: "wisemind-sync-tutorial-intro" });
     intro.createEl("strong", { text: "\u53F3\u952E\u53D1\u9001\u9ED8\u8BA4\u76EE\u6807" });
     intro.createEl("span", { text: "\u8BBE\u7F6E\u540E\uFF0C\u4ECE Obsidian \u53F3\u952E\u83DC\u5355\u53D1\u9001\u7B14\u8BB0\u3001\u6587\u6863\u6216\u77E5\u8BC6\u5E93\u65F6\uFF0C\u4F1A\u9ED8\u8BA4\u9009\u4E2D\u8FD9\u91CC\u7684\u76EE\u6807\u3002" });
-    const status = modal.createDiv({ cls: "wisemind-bridge-muted", text: "\u6B63\u5728\u8BFB\u53D6 WiseMindAI \u76EE\u6807\u5217\u8868..." });
+    const status = modal.createDiv({ cls: "wisemind-sync-muted", text: "\u6B63\u5728\u8BFB\u53D6 WiseMindAI \u76EE\u6807\u5217\u8868..." });
     let snapshot = this.snapshot;
     if (!snapshot) {
       try {
@@ -1242,7 +1242,7 @@ var WiseMindBridgeView = class extends import_obsidian2.ItemView {
     let noteFolderPath = noteOptions.some((item) => item.value === this.plugin.settings.contextMenuDefaults.noteFolderPath) ? this.plugin.settings.contextMenuDefaults.noteFolderPath : "";
     let documentFolderPath = documentOptions.some((item) => item.value === this.plugin.settings.contextMenuDefaults.documentFolderPath) ? this.plugin.settings.contextMenuDefaults.documentFolderPath : "";
     let knowledgeBaseName = knowledgeOptions.some((item) => item.value === this.plugin.settings.contextMenuDefaults.knowledgeBaseName) ? this.plugin.settings.contextMenuDefaults.knowledgeBaseName : knowledgeOptions[0]?.value || this.plugin.settings.contextMenuDefaults.knowledgeBaseName || DEFAULT_SETTINGS.contextMenuDefaults.knowledgeBaseName;
-    const content = modal.createDiv({ cls: "wisemind-bridge-context-settings" });
+    const content = modal.createDiv({ cls: "wisemind-sync-context-settings" });
     content.append(
       renderSelectField({
         title: "\u53D1\u9001\u5230 WiseMindAI \u7B14\u8BB0",
@@ -1273,7 +1273,7 @@ var WiseMindBridgeView = class extends import_obsidian2.ItemView {
         }
       })
     );
-    const actions = modal.createDiv({ cls: "wisemind-bridge-dialog-actions" });
+    const actions = modal.createDiv({ cls: "wisemind-sync-dialog-actions" });
     actions.append(
       createTextButton("\u4FDD\u5B58", async () => {
         this.plugin.settings.contextMenuDefaults = {
@@ -1296,11 +1296,11 @@ var WiseMindBridgeView = class extends import_obsidian2.ItemView {
     window.requestAnimationFrame(() => this.openTutorial());
   }
   openTutorial() {
-    const overlay = this.createDialog("WiseMindAI Obsidian \u4F7F\u7528\u6559\u7A0B");
-    const modal = overlay.querySelector(".wisemind-bridge-dialog");
-    modal.addClass("wisemind-bridge-tutorial-dialog");
-    const tabs = modal.createDiv({ cls: "wisemind-bridge-category-tabs wisemind-bridge-tutorial-tabs" });
-    const content = modal.createDiv({ cls: "wisemind-bridge-tutorial-content" });
+    const overlay = this.createDialog("WiseMindAI Sync \u4F7F\u7528\u6559\u7A0B");
+    const modal = overlay.querySelector(".wisemind-sync-dialog");
+    modal.addClass("wisemind-sync-tutorial-dialog");
+    const tabs = modal.createDiv({ cls: "wisemind-sync-category-tabs wisemind-sync-tutorial-tabs" });
+    const content = modal.createDiv({ cls: "wisemind-sync-tutorial-content" });
     let activeTab = "quick";
     const tabItems = [
       { key: "quick", label: "\u5FEB\u901F\u4E0A\u624B" },
@@ -1311,7 +1311,7 @@ var WiseMindBridgeView = class extends import_obsidian2.ItemView {
       tabs.empty();
       tabItems.forEach((item) => {
         const button = document.createElement("button");
-        button.className = `wisemind-bridge-category-tab${activeTab === item.key ? " is-active" : ""}`;
+        button.className = `wisemind-sync-category-tab${activeTab === item.key ? " is-active" : ""}`;
         button.textContent = item.label;
         button.onclick = () => {
           activeTab = item.key;
@@ -1322,30 +1322,30 @@ var WiseMindBridgeView = class extends import_obsidian2.ItemView {
       });
     };
     const renderCard = (title, desc) => {
-      const card = content.createDiv({ cls: "wisemind-bridge-tutorial-step" });
+      const card = content.createDiv({ cls: "wisemind-sync-tutorial-step" });
       card.createEl("strong", { text: title });
       card.createEl("span", { text: desc });
     };
     const renderBadges = (title, items) => {
-      const wrap = content.createDiv({ cls: "wisemind-bridge-plan-summary" });
-      const label = wrap.createEl("span", { cls: "wisemind-bridge-muted", text: title });
+      const wrap = content.createDiv({ cls: "wisemind-sync-plan-summary" });
+      const label = wrap.createEl("span", { cls: "wisemind-sync-muted", text: title });
       label.style.fontWeight = "600";
-      const badges = wrap.createDiv({ cls: "wisemind-bridge-badges" });
-      items.forEach((text) => badges.createEl("span", { cls: "wisemind-bridge-badge-soft", text }));
+      const badges = wrap.createDiv({ cls: "wisemind-sync-badges" });
+      items.forEach((text) => badges.createEl("span", { cls: "wisemind-sync-badge-soft", text }));
     };
     const renderTutorialContent = () => {
       content.empty();
       if (activeTab === "quick") {
-        const intro = content.createDiv({ cls: "wisemind-bridge-tutorial-intro" });
+        const intro = content.createDiv({ cls: "wisemind-sync-tutorial-intro" });
         intro.createEl("strong", { text: "\u4E09\u6B65\u5B8C\u6210\u4E00\u6B21\u540C\u6B65" });
         intro.createEl("span", { text: "\u5148\u542F\u52A8 WiseMindAI\uFF0C\u518D\u9009\u62E9\u540C\u6B65\u65B9\u5411\u548C\u5185\u5BB9\uFF0C\u6700\u540E\u70B9\u51FB\u6267\u884C\u540C\u6B65\u3002" });
-        const steps = content.createDiv({ cls: "wisemind-bridge-tutorial-steps" });
+        const steps = content.createDiv({ cls: "wisemind-sync-tutorial-steps" });
         [
           ["1. \u9009\u62E9\u65B9\u5411", "Obsidian -> WiseMindAI \u662F\u5BFC\u5165\u5230 WiseMindAI\uFF1BWiseMindAI -> Obsidian \u662F\u5199\u56DE\u5F53\u524D\u4ED3\u5E93\u3002"],
           ["2. \u52FE\u9009\u5185\u5BB9\u548C\u76EE\u6807", "\u5DE6\u8FB9\u9009\u8981\u540C\u6B65\u7684\u5185\u5BB9\uFF0C\u53F3\u8FB9\u9009\u4FDD\u5B58\u4F4D\u7F6E\u3002\u6587\u4EF6\u5939\u524D\u7684\u590D\u9009\u6846\u53EF\u4EE5\u4E00\u952E\u5168\u9009\u3002"],
           ["3. \u70B9\u51FB\u6267\u884C\u540C\u6B65", "\u9700\u8981\u8986\u76D6\u65E7\u5185\u5BB9\u65F6\u52FE\u9009\u201C\u8986\u76D6\u5DF2\u6709\u201D\uFF1B\u4E0D\u786E\u5B9A\u65F6\u5148\u9009\u5C11\u91CF\u5185\u5BB9\u6D4B\u8BD5\u3002"]
         ].forEach(([title, desc]) => {
-          const card = steps.createDiv({ cls: "wisemind-bridge-tutorial-step" });
+          const card = steps.createDiv({ cls: "wisemind-sync-tutorial-step" });
           card.createEl("strong", { text: title });
           card.createEl("span", { text: desc });
         });
@@ -1366,20 +1366,20 @@ var WiseMindBridgeView = class extends import_obsidian2.ItemView {
     };
     renderTutorialTabs();
     renderTutorialContent();
-    const actions = modal.createDiv({ cls: "wisemind-bridge-dialog-actions" });
+    const actions = modal.createDiv({ cls: "wisemind-sync-dialog-actions" });
     actions.appendChild(createTextButton("\u6211\u77E5\u9053\u4E86", () => overlay.remove(), this.getIconSvg("check-circle.svg")));
   }
   renderPlanBar() {
     if (!this.planBarEl)
       return;
     this.planBarEl.empty();
-    const label = this.planBarEl.createDiv({ cls: "wisemind-bridge-plan-label" });
+    const label = this.planBarEl.createDiv({ cls: "wisemind-sync-plan-label" });
     label.createEl("strong", { text: "\u540C\u6B65\u65B9\u6848" });
     label.createEl("span", {
-      cls: "wisemind-bridge-muted",
+      cls: "wisemind-sync-muted",
       text: this.getActivePlanName() ? `\u5F53\u524D\uFF1A${this.getActivePlanName()}` : "\u53EF\u4FDD\u5B58\u5F53\u524D\u9009\u62E9\uFF0C\u4E0B\u6B21\u76F4\u63A5\u5957\u7528\u3002"
     });
-    const controls = this.planBarEl.createDiv({ cls: "wisemind-bridge-plan-controls" });
+    const controls = this.planBarEl.createDiv({ cls: "wisemind-sync-plan-controls" });
     controls.append(
       createTextButton("\u9009\u62E9\u65B9\u6848", () => this.openPlanPicker(), this.getIconSvg("bookmark-square.svg")),
       createTextButton("\u4FDD\u5B58\u65B0\u65B9\u6848", () => this.openSavePlanDialog(), this.getIconSvg("plus.svg"))
@@ -1395,10 +1395,10 @@ var WiseMindBridgeView = class extends import_obsidian2.ItemView {
   }
   openPlanPicker() {
     const overlay = this.createDialog("\u9009\u62E9\u540C\u6B65\u65B9\u6848");
-    const modal = overlay.querySelector(".wisemind-bridge-dialog");
+    const modal = overlay.querySelector(".wisemind-sync-dialog");
     const plans = () => [...this.plugin.settings.syncPlans || []].sort((a, b) => b.updatedAt - a.updatedAt);
     let selectedId = this.plugin.settings.defaultSyncPlanId || plans()[0]?.id || "";
-    const list = modal.createDiv({ cls: "wisemind-bridge-plan-list" });
+    const list = modal.createDiv({ cls: "wisemind-sync-plan-list" });
     const renderList = () => {
       list.empty();
       if (!plans().length) {
@@ -1406,7 +1406,7 @@ var WiseMindBridgeView = class extends import_obsidian2.ItemView {
         return;
       }
       plans().forEach((plan) => {
-        const row = list.createEl("label", { cls: "wisemind-bridge-plan-row" });
+        const row = list.createEl("label", { cls: "wisemind-sync-plan-row" });
         const radio = row.createEl("input");
         radio.type = "radio";
         radio.name = "wisemind-sync-plan";
@@ -1414,17 +1414,17 @@ var WiseMindBridgeView = class extends import_obsidian2.ItemView {
         radio.onchange = () => {
           selectedId = plan.id;
         };
-        const text = row.createDiv({ cls: "wisemind-bridge-plan-row-text" });
-        const title = text.createDiv({ cls: "wisemind-bridge-plan-title-line" });
+        const text = row.createDiv({ cls: "wisemind-sync-plan-row-text" });
+        const title = text.createDiv({ cls: "wisemind-sync-plan-title-line" });
         title.createEl("strong", { text: plan.name });
         if (plan.id === this.plugin.settings.defaultSyncPlanId) {
-          title.createEl("span", { cls: "wisemind-bridge-badge-soft is-primary", text: "\u9ED8\u8BA4" });
+          title.createEl("span", { cls: "wisemind-sync-badge-soft is-primary", text: "\u9ED8\u8BA4" });
         }
         text.createEl("span", {
-          cls: "wisemind-bridge-muted",
+          cls: "wisemind-sync-muted",
           text: `${plan.direction === "to-wisemind" ? "Obsidian -> WiseMindAI" : "WiseMindAI -> Obsidian"} \xB7 ${formatDateTime(plan.updatedAt)}`
         });
-        const actions = row.createDiv({ cls: "wisemind-bridge-plan-row-actions" });
+        const actions = row.createDiv({ cls: "wisemind-sync-plan-row-actions" });
         actions.append(
           createIconButton(createInlineIcon(this.getIconSvg("check-circle.svg"), "\u5E94\u7528"), "\u5E94\u7528", async () => {
             selectedId = plan.id;
@@ -1477,18 +1477,18 @@ var WiseMindBridgeView = class extends import_obsidian2.ItemView {
   }
   openSavePlanDialog() {
     const overlay = this.createDialog("\u4FDD\u5B58\u65B0\u65B9\u6848");
-    const modal = overlay.querySelector(".wisemind-bridge-dialog");
+    const modal = overlay.querySelector(".wisemind-sync-dialog");
     const summary = this.getCurrentPlanSummary();
-    const summaryWrap = modal.createDiv({ cls: "wisemind-bridge-plan-summary" });
+    const summaryWrap = modal.createDiv({ cls: "wisemind-sync-plan-summary" });
     summary.forEach((item) => {
-      const row = summaryWrap.createDiv({ cls: "wisemind-bridge-summary-row" });
+      const row = summaryWrap.createDiv({ cls: "wisemind-sync-summary-row" });
       row.createEl("span", { text: item.label });
-      const badges = row.createDiv({ cls: "wisemind-bridge-badges" });
+      const badges = row.createDiv({ cls: "wisemind-sync-badges" });
       const values = item.values.length ? item.values : [item.emptyText];
-      values.forEach((value) => badges.createEl("span", { cls: "wisemind-bridge-badge-soft", text: value }));
+      values.forEach((value) => badges.createEl("span", { cls: "wisemind-sync-badge-soft", text: value }));
     });
     const input = modal.createEl("input", {
-      cls: "wisemind-bridge-plan-name",
+      cls: "wisemind-sync-plan-name",
       attr: { placeholder: "\u65B9\u6848\u540D\u79F0" }
     });
     input.value = this.pendingPlanName;
@@ -1496,7 +1496,7 @@ var WiseMindBridgeView = class extends import_obsidian2.ItemView {
       this.pendingPlanName = input.value;
     };
     window.requestAnimationFrame(() => input.focus());
-    const actions = modal.createDiv({ cls: "wisemind-bridge-dialog-actions" });
+    const actions = modal.createDiv({ cls: "wisemind-sync-dialog-actions" });
     actions.appendChild(createTextButton("\u4FDD\u5B58", async () => {
       await this.saveCurrentAsPlan(input.value);
       overlay.remove();
@@ -1504,17 +1504,17 @@ var WiseMindBridgeView = class extends import_obsidian2.ItemView {
   }
   openHistory() {
     const overlay = document.createElement("div");
-    overlay.className = "wisemind-bridge-history-overlay";
-    const modal = overlay.createDiv({ cls: "wisemind-bridge-history-modal" });
-    const header = modal.createDiv({ cls: "wisemind-bridge-history-title" });
+    overlay.className = "wisemind-sync-history-overlay";
+    const modal = overlay.createDiv({ cls: "wisemind-sync-history-modal" });
+    const header = modal.createDiv({ cls: "wisemind-sync-history-title" });
     header.createEl("h2", { text: "\u540C\u6B65\u5386\u53F2" });
     header.appendChild(createIconButton(createInlineIcon(this.getIconSvg("x-mark.svg"), "\u5173\u95ED"), "\u5173\u95ED", () => overlay.remove()));
     let activeDirection = "to-wisemind";
     let search = "";
-    const tabs = modal.createDiv({ cls: "wisemind-bridge-direction-tabs wisemind-bridge-history-tabs" });
-    const searchRow = modal.createDiv({ cls: "wisemind-bridge-history-tools" });
+    const tabs = modal.createDiv({ cls: "wisemind-sync-direction-tabs wisemind-sync-history-tabs" });
+    const searchRow = modal.createDiv({ cls: "wisemind-sync-history-tools" });
     const searchInput = searchRow.createEl("input", {
-      cls: "wisemind-bridge-search",
+      cls: "wisemind-sync-search",
       attr: { placeholder: "\u641C\u7D22\u6587\u4EF6\u3001\u6587\u4EF6\u5939\u6216\u76EE\u6807" }
     });
     searchRow.appendChild(createTextButton("\u6E05\u7A7A\u5386\u53F2", async () => {
@@ -1525,7 +1525,7 @@ var WiseMindBridgeView = class extends import_obsidian2.ItemView {
       renderHistory();
       new import_obsidian2.Notice("\u540C\u6B65\u5386\u53F2\u5DF2\u6E05\u7A7A");
     }, this.getIconSvg("trash.svg")));
-    const list = modal.createDiv({ cls: "wisemind-bridge-history-list-wrap" });
+    const list = modal.createDiv({ cls: "wisemind-sync-history-list-wrap" });
     const renderTabs = () => {
       tabs.empty();
       tabs.append(
@@ -1555,14 +1555,14 @@ var WiseMindBridgeView = class extends import_obsidian2.ItemView {
         return;
       }
       history.forEach((item) => {
-        const card = modal.createDiv({ cls: "wisemind-bridge-history-card" });
-        const cardHeader = card.createDiv({ cls: "wisemind-bridge-history-header" });
+        const card = modal.createDiv({ cls: "wisemind-sync-history-card" });
+        const cardHeader = card.createDiv({ cls: "wisemind-sync-history-header" });
         cardHeader.createEl("strong", {
           text: item.direction === "to-wisemind" ? "Obsidian -> WiseMindAI" : "WiseMindAI -> Obsidian"
         });
         cardHeader.createEl("span", { text: formatDateTime(item.createdAt) });
         card.createDiv({
-          cls: "wisemind-bridge-muted",
+          cls: "wisemind-sync-muted",
           text: `\u521B\u5EFA ${item.created}\uFF0C\u66F4\u65B0 ${item.updated}\uFF0C\u8DF3\u8FC7 ${item.skipped}\uFF0C\u5931\u8D25 ${item.failed}`
         });
         renderHistoryBadges(card, "\u6765\u6E90\u6587\u4EF6\u5939", item.sourceFolders);
@@ -1588,7 +1588,7 @@ var WiseMindBridgeView = class extends import_obsidian2.ItemView {
   }
   renderHistoryTab(direction, text, activeDirection, onClick) {
     const button = document.createElement("button");
-    button.className = `wisemind-bridge-tab${activeDirection === direction ? " is-active" : ""}`;
+    button.className = `wisemind-sync-tab${activeDirection === direction ? " is-active" : ""}`;
     button.textContent = text;
     button.onclick = onClick;
     return button;
@@ -1618,7 +1618,7 @@ var WiseMindBridgeView = class extends import_obsidian2.ItemView {
         this.focusSearch("\u641C\u7D22\u6587\u4EF6\u5939\u6216\u7B14\u8BB0", value.length);
       }
     });
-    const sourceList = sourcePanel.createDiv({ cls: "wisemind-bridge-list" });
+    const sourceList = sourcePanel.createDiv({ cls: "wisemind-sync-list" });
     const obsidianGroups = this.getFilteredObsidianGroups();
     obsidianGroups.forEach((group) => {
       sourceList.appendChild(this.renderTreeGroup({
@@ -1651,7 +1651,7 @@ var WiseMindBridgeView = class extends import_obsidian2.ItemView {
         this.focusSearch("\u641C\u7D22\u76EE\u6807", value.length);
       }
     });
-    const targetList = targetPanel.createDiv({ cls: "wisemind-bridge-list" });
+    const targetList = targetPanel.createDiv({ cls: "wisemind-sync-list" });
     if (this.wiseMindConnectionError) {
       targetList.appendChild(renderWiseMindConnectionEmpty(this.wiseMindConnectionError, () => void this.refresh(true), this.getIconSvg("arrow-path.svg")));
     } else {
@@ -1680,7 +1680,7 @@ var WiseMindBridgeView = class extends import_obsidian2.ItemView {
       }
     });
     sourcePanel.appendChild(this.renderWiseMindCategoryTabs());
-    const sourceList = sourcePanel.createDiv({ cls: "wisemind-bridge-list" });
+    const sourceList = sourcePanel.createDiv({ cls: "wisemind-sync-list" });
     const groups = this.getFilteredWiseMindSourceGroups();
     if (this.wiseMindConnectionError) {
       sourceList.appendChild(renderWiseMindConnectionEmpty(this.wiseMindConnectionError, () => void this.refresh(true), this.getIconSvg("arrow-path.svg")));
@@ -1716,10 +1716,10 @@ var WiseMindBridgeView = class extends import_obsidian2.ItemView {
         this.focusSearch("\u641C\u7D22 Obsidian \u6587\u4EF6\u5939", value.length);
       }
     });
-    const targetList = targetPanel.createDiv({ cls: "wisemind-bridge-list wisemind-bridge-list-to-obsidian" });
-    const createRow = targetList.createDiv({ cls: "wisemind-bridge-create-folder" });
+    const targetList = targetPanel.createDiv({ cls: "wisemind-sync-list wisemind-sync-list-to-obsidian" });
+    const createRow = targetList.createDiv({ cls: "wisemind-sync-create-folder" });
     const input = createRow.createEl("input", {
-      cls: "wisemind-bridge-search",
+      cls: "wisemind-sync-search",
       attr: { placeholder: "\u65B0\u5EFA\u6587\u4EF6\u5939\u540D\u79F0" }
     });
     createRow.appendChild(createTextButton("\u521B\u5EFA", () => void this.createObsidianTargetFolder(input.value), this.getIconSvg("plus.svg")));
@@ -1742,7 +1742,7 @@ var WiseMindBridgeView = class extends import_obsidian2.ItemView {
   }
   renderWiseMindCategoryTabs() {
     const tabs = document.createElement("div");
-    tabs.className = "wisemind-bridge-category-tabs";
+    tabs.className = "wisemind-sync-category-tabs";
     const items = [
       { value: "documents", label: "\u6587\u6863" },
       { value: "knowledge", label: "\u77E5\u8BC6\u5E93" },
@@ -1750,7 +1750,7 @@ var WiseMindBridgeView = class extends import_obsidian2.ItemView {
     ];
     items.forEach((item) => {
       const button = document.createElement("button");
-      button.className = `wisemind-bridge-category-tab${this.activeWiseMindCategory === item.value ? " is-active" : ""}`;
+      button.className = `wisemind-sync-category-tab${this.activeWiseMindCategory === item.value ? " is-active" : ""}`;
       button.append(createInlineIcon(this.getIconSvg(categoryIcon(item.value)), item.label), document.createTextNode(item.label));
       button.onclick = () => {
         this.activeWiseMindCategory = item.value;
@@ -1763,13 +1763,13 @@ var WiseMindBridgeView = class extends import_obsidian2.ItemView {
   }
   renderTreeGroup(params) {
     const wrapper = document.createElement("div");
-    wrapper.className = "wisemind-bridge-tree-group";
+    wrapper.className = "wisemind-sync-tree-group";
     const expanded = this.expandedGroups.has(params.group.id);
     const groupKeys = params.group.items.map(params.keyOf);
     const selectedCount = groupKeys.filter((key) => params.selected.has(key)).length;
     const allSelected = selectedCount === groupKeys.length && groupKeys.length > 0;
     const header = document.createElement("div");
-    header.className = "wisemind-bridge-tree-header";
+    header.className = "wisemind-sync-tree-header";
     const expandButton = createIconButton(
       createInlineIcon(expanded ? this.getIconSvg("chevron-down.svg") : this.getIconSvg("chevron-right.svg"), expanded ? "\u6536\u8D77" : "\u5C55\u5F00"),
       expanded ? "\u6536\u8D77" : "\u5C55\u5F00",
@@ -1790,15 +1790,15 @@ var WiseMindBridgeView = class extends import_obsidian2.ItemView {
       params.onRender();
     };
     const titleWrap = document.createElement("div");
-    titleWrap.className = "wisemind-bridge-tree-title";
+    titleWrap.className = "wisemind-sync-tree-title";
     titleWrap.createEl("strong", { text: params.group.title });
     const count = document.createElement("span");
-    count.className = "wisemind-bridge-muted wisemind-bridge-tree-count";
+    count.className = "wisemind-sync-muted wisemind-sync-tree-count";
     count.textContent = `\u5DF2\u9009 ${selectedCount}/${groupKeys.length}`;
     header.append(expandButton, checkbox, titleWrap, count);
     if (params.showActions !== false) {
       const groupActions = document.createElement("div");
-      groupActions.className = "wisemind-bridge-group-actions";
+      groupActions.className = "wisemind-sync-group-actions";
       groupActions.append(
         createTextButton("\u5168\u9009", () => {
           groupKeys.forEach((key) => params.selected.add(key));
@@ -1813,7 +1813,7 @@ var WiseMindBridgeView = class extends import_obsidian2.ItemView {
     }
     wrapper.appendChild(header);
     if (expanded) {
-      const children = wrapper.createDiv({ cls: "wisemind-bridge-tree-children" });
+      const children = wrapper.createDiv({ cls: "wisemind-sync-tree-children" });
       if (!params.group.items.length) {
         children.appendChild(renderEmpty(params.group.emptyText || "\u6CA1\u6709\u53EF\u9009\u5185\u5BB9\u3002"));
       } else {
@@ -1835,10 +1835,10 @@ var WiseMindBridgeView = class extends import_obsidian2.ItemView {
   }
   renderDestinationGroup(group) {
     const wrapper = document.createElement("div");
-    wrapper.className = "wisemind-bridge-tree-group";
+    wrapper.className = "wisemind-sync-tree-group";
     const expanded = this.expandedGroups.has(group.id);
     const header = document.createElement("div");
-    header.className = "wisemind-bridge-tree-header";
+    header.className = "wisemind-sync-tree-header";
     const expandButton = createIconButton(
       createInlineIcon(expanded ? this.getIconSvg("chevron-down.svg") : this.getIconSvg("chevron-right.svg"), expanded ? "\u6536\u8D77" : "\u5C55\u5F00"),
       expanded ? "\u6536\u8D77" : "\u5C55\u5F00",
@@ -1851,13 +1851,13 @@ var WiseMindBridgeView = class extends import_obsidian2.ItemView {
       }
     );
     const titleWrap = document.createElement("div");
-    titleWrap.className = "wisemind-bridge-tree-title";
+    titleWrap.className = "wisemind-sync-tree-title";
     titleWrap.createEl("strong", { text: group.title });
-    titleWrap.createEl("span", { cls: "wisemind-bridge-muted", text: group.subtitle });
+    titleWrap.createEl("span", { cls: "wisemind-sync-muted", text: group.subtitle });
     header.append(expandButton, titleWrap);
     wrapper.appendChild(header);
     if (expanded) {
-      const children = wrapper.createDiv({ cls: "wisemind-bridge-tree-children" });
+      const children = wrapper.createDiv({ cls: "wisemind-sync-tree-children" });
       if (!group.children.length) {
         children.appendChild(renderEmpty(group.emptyText));
       } else {
@@ -2019,11 +2019,11 @@ var WiseMindBridgeView = class extends import_obsidian2.ItemView {
     this.restoreListScroll(scrollTops);
   }
   captureListScroll() {
-    return Array.from(this.flowEl?.querySelectorAll(".wisemind-bridge-list") || []).map((item) => item.scrollTop);
+    return Array.from(this.flowEl?.querySelectorAll(".wisemind-sync-list") || []).map((item) => item.scrollTop);
   }
   restoreListScroll(scrollTops) {
     window.requestAnimationFrame(() => {
-      Array.from(this.flowEl?.querySelectorAll(".wisemind-bridge-list") || []).forEach((item, index) => {
+      Array.from(this.flowEl?.querySelectorAll(".wisemind-sync-list") || []).forEach((item, index) => {
         item.scrollTop = scrollTops[index] || 0;
       });
     });
@@ -2053,9 +2053,9 @@ var WiseMindBridgeView = class extends import_obsidian2.ItemView {
   }
   createDialog(title) {
     const overlay = document.createElement("div");
-    overlay.className = "wisemind-bridge-history-overlay";
-    const modal = overlay.createDiv({ cls: "wisemind-bridge-dialog" });
-    const header = modal.createDiv({ cls: "wisemind-bridge-history-title" });
+    overlay.className = "wisemind-sync-history-overlay";
+    const modal = overlay.createDiv({ cls: "wisemind-sync-dialog" });
+    const header = modal.createDiv({ cls: "wisemind-sync-history-title" });
     header.createEl("h2", { text: title });
     header.appendChild(createIconButton(createInlineIcon(this.getIconSvg("x-mark.svg"), "\u5173\u95ED"), "\u5173\u95ED", () => overlay.remove()));
     overlay.onclick = (event) => {
@@ -2154,8 +2154,8 @@ var WiseMindBridgeView = class extends import_obsidian2.ItemView {
   }
   renderExecuteArea() {
     const footer = document.createElement("div");
-    footer.className = "wisemind-bridge-execute";
-    const overwrite = footer.createEl("label", { cls: "wisemind-bridge-overwrite-toggle" });
+    footer.className = "wisemind-sync-execute";
+    const overwrite = footer.createEl("label", { cls: "wisemind-sync-overwrite-toggle" });
     const checkbox = overwrite.createEl("input");
     checkbox.type = "checkbox";
     checkbox.checked = this.overwriteExisting;
@@ -2164,7 +2164,7 @@ var WiseMindBridgeView = class extends import_obsidian2.ItemView {
     };
     overwrite.createEl("span", { text: "\u8986\u76D6\u5DF2\u6709" });
     if (this.direction === "to-obsidian") {
-      const includeFolders = footer.createEl("label", { cls: "wisemind-bridge-overwrite-toggle" });
+      const includeFolders = footer.createEl("label", { cls: "wisemind-sync-overwrite-toggle" });
       const includeCheckbox = includeFolders.createEl("input");
       includeCheckbox.type = "checkbox";
       includeCheckbox.checked = this.includeObsidianFolders;
@@ -2419,11 +2419,11 @@ var ICONS = {
 };
 var renderSummaryBlock = (title, items) => {
   const block = document.createElement("div");
-  block.className = "wisemind-bridge-summary-block";
+  block.className = "wisemind-sync-summary-block";
   block.createEl("strong", { text: title });
-  const metrics = block.createDiv({ cls: "wisemind-bridge-summary-metrics" });
+  const metrics = block.createDiv({ cls: "wisemind-sync-summary-metrics" });
   items.forEach((item) => {
-    const metric = metrics.createDiv({ cls: "wisemind-bridge-summary-metric" });
+    const metric = metrics.createDiv({ cls: "wisemind-sync-summary-metric" });
     metric.createEl("span", { text: String(item.value) });
     metric.createEl("em", { text: item.label });
   });
@@ -2431,22 +2431,22 @@ var renderSummaryBlock = (title, items) => {
 };
 var renderPanel = (params) => {
   const panel = document.createElement("section");
-  panel.className = "wisemind-bridge-panel";
-  const header = panel.createDiv({ cls: "wisemind-bridge-panel-header" });
+  panel.className = "wisemind-sync-panel";
+  const header = panel.createDiv({ cls: "wisemind-sync-panel-header" });
   const text = header.createDiv();
   text.createEl("strong", { text: params.title });
-  text.createEl("span", { cls: "wisemind-bridge-muted", text: params.desc });
-  const right = header.createDiv({ cls: "wisemind-bridge-panel-right" });
+  text.createEl("span", { cls: "wisemind-sync-muted", text: params.desc });
+  const right = header.createDiv({ cls: "wisemind-sync-panel-right" });
   if (params.countText) {
-    right.createEl("span", { cls: "wisemind-bridge-panel-count", text: params.countText });
+    right.createEl("span", { cls: "wisemind-sync-panel-count", text: params.countText });
   }
   if (params.onToggleAll) {
-    const actions = right.createDiv({ cls: "wisemind-bridge-group-actions" });
+    const actions = right.createDiv({ cls: "wisemind-sync-group-actions" });
     actions.append(createTextButton(params.allSelected ? "\u6E05\u7A7A" : "\u5168\u9009", params.onToggleAll));
   }
   if (params.onSearch) {
     const search = panel.createEl("input", {
-      cls: "wisemind-bridge-search",
+      cls: "wisemind-sync-search",
       attr: { placeholder: params.searchPlaceholder || "\u641C\u7D22" }
     });
     search.value = params.searchValue || "";
@@ -2456,40 +2456,40 @@ var renderPanel = (params) => {
 };
 var renderArrow = (icon) => {
   const arrow = document.createElement("div");
-  arrow.className = "wisemind-bridge-arrow";
+  arrow.className = "wisemind-sync-arrow";
   arrow.appendChild(createInlineIcon(icon, "\u540C\u6B65\u65B9\u5411"));
   return arrow;
 };
 var renderCheckRow = (params) => {
   const row = document.createElement("label");
-  row.className = "wisemind-bridge-row";
+  row.className = "wisemind-sync-row";
   const left = document.createElement("span");
-  left.className = "wisemind-bridge-row-main";
+  left.className = "wisemind-sync-row-main";
   const checkbox = document.createElement("input");
   checkbox.type = "checkbox";
   checkbox.checked = params.checked;
   checkbox.onchange = () => params.onChange(checkbox.checked);
   const title = document.createElement("span");
-  title.className = "wisemind-bridge-row-title";
+  title.className = "wisemind-sync-row-title";
   title.textContent = params.title;
   left.append(checkbox, title);
   const meta = document.createElement("span");
-  meta.className = "wisemind-bridge-muted wisemind-bridge-row-meta";
+  meta.className = "wisemind-sync-muted wisemind-sync-row-meta";
   meta.textContent = params.meta;
   row.append(left, meta);
   return row;
 };
 var renderSelectField = (params) => {
   const row = document.createElement("label");
-  row.className = "wisemind-bridge-context-select-row";
-  const header = row.createDiv({ cls: "wisemind-bridge-context-section-header" });
+  row.className = "wisemind-sync-context-select-row";
+  const header = row.createDiv({ cls: "wisemind-sync-context-section-header" });
   header.createEl("strong", { text: params.title });
-  header.createEl("span", { cls: "wisemind-bridge-muted", text: params.desc });
+  header.createEl("span", { cls: "wisemind-sync-muted", text: params.desc });
   if (!params.options.length) {
-    row.createEl("span", { cls: "wisemind-bridge-muted", text: params.emptyText || "\u6CA1\u6709\u53EF\u9009\u62E9\u7684\u76EE\u6807\u3002" });
+    row.createEl("span", { cls: "wisemind-sync-muted", text: params.emptyText || "\u6CA1\u6709\u53EF\u9009\u62E9\u7684\u76EE\u6807\u3002" });
     return row;
   }
-  const select = row.createEl("select", { cls: "wisemind-bridge-select" });
+  const select = row.createEl("select", { cls: "wisemind-sync-select" });
   params.options.forEach((option) => {
     const item = select.createEl("option", { text: option.title });
     item.value = option.value;
@@ -2501,13 +2501,13 @@ var renderSelectField = (params) => {
 };
 var renderEmpty = (text) => {
   const empty = document.createElement("div");
-  empty.className = "wisemind-bridge-empty";
+  empty.className = "wisemind-sync-empty";
   empty.textContent = text;
   return empty;
 };
 var renderWiseMindConnectionEmpty = (message, onRetry, retryIcon) => {
   const empty = document.createElement("div");
-  empty.className = "wisemind-bridge-empty wisemind-bridge-connection-empty";
+  empty.className = "wisemind-sync-empty wisemind-sync-connection-empty";
   empty.createEl("strong", { text: "\u672A\u8FDE\u63A5 WiseMindAI" });
   empty.createEl("p", { text: message || "\u8BF7\u5148\u542F\u52A8 WiseMindAI \u5E94\u7528\uFF0C\u5E76\u786E\u8BA4\u672C\u5730\u63A5\u53E3\u5DF2\u5F00\u542F\u3002" });
   empty.appendChild(createButton("\u91CD\u65B0\u8FDE\u63A5", onRetry, "secondary", retryIcon));
@@ -2525,7 +2525,7 @@ var renderWiseMindConnectionEmpty = (message, onRetry, retryIcon) => {
 };
 var createButton = (text, onClick, kind, icon) => {
   const button = document.createElement("button");
-  button.className = `wisemind-bridge-button is-${kind}`;
+  button.className = `wisemind-sync-button is-${kind}`;
   if (icon)
     button.append(createInlineIcon(icon, text));
   button.append(document.createTextNode(text));
@@ -2534,7 +2534,7 @@ var createButton = (text, onClick, kind, icon) => {
 };
 var createIconButton = (content, title, onClick) => {
   const button = document.createElement("button");
-  button.className = "wisemind-bridge-icon-button";
+  button.className = "wisemind-sync-icon-button";
   if (typeof content === "string") {
     button.textContent = content;
   } else {
@@ -2550,7 +2550,7 @@ var createIconButton = (content, title, onClick) => {
 };
 var createTextButton = (text, onClick, icon, extraClass = "") => {
   const button = document.createElement("button");
-  button.className = `wisemind-bridge-text-button${extraClass ? ` ${extraClass}` : ""}`;
+  button.className = `wisemind-sync-text-button${extraClass ? ` ${extraClass}` : ""}`;
   button.title = text;
   if (icon)
     button.append(createInlineIcon(icon, text));
@@ -2563,7 +2563,7 @@ var createTextButton = (text, onClick, icon, extraClass = "") => {
 };
 var createInlineIcon = (svg, label, cls = "") => {
   const icon = document.createElement("span");
-  icon.className = `wisemind-bridge-inline-icon${cls ? ` ${cls}` : ""}`;
+  icon.className = `wisemind-sync-inline-icon${cls ? ` ${cls}` : ""}`;
   icon.setAttribute("aria-label", label);
   icon.innerHTML = svg || "";
   return icon;
@@ -2583,12 +2583,12 @@ var targetSetFromSettings = (settings) => {
   return targets;
 };
 var renderHistoryBadges = (parent, title, items) => {
-  const wrap = parent.createDiv({ cls: "wisemind-bridge-history-line" });
+  const wrap = parent.createDiv({ cls: "wisemind-sync-history-line" });
   wrap.createEl("span", { text: title });
-  const badges = wrap.createDiv({ cls: "wisemind-bridge-badges" });
+  const badges = wrap.createDiv({ cls: "wisemind-sync-badges" });
   const values = summarizeValues(items);
   (values.length ? values : ["\u65E0"]).forEach((value) => {
-    badges.createEl("span", { cls: "wisemind-bridge-badge-soft", text: value });
+    badges.createEl("span", { cls: "wisemind-sync-badge-soft", text: value });
   });
 };
 var safeTitle = (...values) => {
@@ -2640,10 +2640,10 @@ var formatResult = (result) => `\u521B\u5EFA ${result.created}\uFF0C\u66F4\u65B0
 ${result.items.slice(-20).map((item) => `${item.status} \xB7 ${item.title}${item.message ? ` \xB7 ${item.message}` : ""}`).join("\n")}`;
 
 // src/main.ts
-var WISEMIND_VIEW_TYPE = "wisemindai-bridge-view";
+var WISEMIND_VIEW_TYPE = "wisemindai-sync-view";
 var WISEMIND_ICON_ID = "wisemindai-logo";
 var WISEMIND_OBSIDIAN_ICON = wisemindai_logo_default.replace(/^<svg[^>]*>/, '<g transform="scale(0.09765625)">').replace(/<\/svg>\s*$/, "</g>");
-var WiseMindObsidianPlugin2 = class extends import_obsidian3.Plugin {
+var WiseMindSyncPlugin2 = class extends import_obsidian3.Plugin {
   settings = DEFAULT_SETTINGS;
   api = new WiseMindApiClient(DEFAULT_SETTINGS.apiBaseUrl);
   statusBar;
@@ -2657,9 +2657,9 @@ var WiseMindObsidianPlugin2 = class extends import_obsidian3.Plugin {
     this.api = new WiseMindApiClient(this.settings.apiBaseUrl);
     (0, import_obsidian3.addIcon)(WISEMIND_ICON_ID, WISEMIND_OBSIDIAN_ICON);
     this.addSettingTab(new WiseMindSettingTab(this.app, this));
-    this.registerView(WISEMIND_VIEW_TYPE, (leaf) => new WiseMindBridgeView(leaf, this));
+    this.registerView(WISEMIND_VIEW_TYPE, (leaf) => new WiseMindSyncView(leaf, this));
     this.statusBar = new WiseMindStatusBar(this.addStatusBarItem(), () => void this.activateView());
-    const ribbonIcon = this.addRibbonIcon(WISEMIND_ICON_ID, "WiseMindAI Obsidian", () => void this.activateView());
+    const ribbonIcon = this.addRibbonIcon(WISEMIND_ICON_ID, "WiseMindAI Sync", () => void this.activateView());
     if (!ribbonIcon.querySelector("svg")) {
       ribbonIcon.innerHTML = wisemindai_logo_default;
     }
@@ -2691,7 +2691,7 @@ var WiseMindObsidianPlugin2 = class extends import_obsidian3.Plugin {
     }
     const leaf = this.app.workspace.getRightLeaf(false);
     if (!leaf) {
-      new import_obsidian3.Notice("\u65E0\u6CD5\u6253\u5F00 WiseMindAI Obsidian \u9875\u9762");
+      new import_obsidian3.Notice("\u65E0\u6CD5\u6253\u5F00 WiseMindAI Sync \u9875\u9762");
       return;
     }
     await leaf.setViewState({ type: WISEMIND_VIEW_TYPE, active: true });
@@ -2699,7 +2699,7 @@ var WiseMindObsidianPlugin2 = class extends import_obsidian3.Plugin {
   }
   registerCommands() {
     this.addCommand({
-      id: "open-wisemind-bridge",
+      id: "open-wisemind-sync",
       name: "WiseMindAI: \u6253\u5F00\u540C\u6B65\u63A7\u5236\u53F0",
       callback: () => void this.activateView()
     });
@@ -2924,11 +2924,11 @@ var WiseMindObsidianPlugin2 = class extends import_obsidian3.Plugin {
   openContextMenuDestinationDialog(target, options) {
     return new Promise((resolve) => {
       const overlay = document.createElement("div");
-      overlay.className = "wisemind-bridge-history-overlay";
-      const modal = overlay.createDiv({ cls: "wisemind-bridge-dialog wisemind-bridge-context-dialog" });
-      const header = modal.createDiv({ cls: "wisemind-bridge-history-title" });
+      overlay.className = "wisemind-sync-history-overlay";
+      const modal = overlay.createDiv({ cls: "wisemind-sync-dialog wisemind-sync-context-dialog" });
+      const header = modal.createDiv({ cls: "wisemind-sync-history-title" });
       header.createEl("h2", { text: `\u9009\u62E9${contextMenuTargetLabel(target)}` });
-      const closeButton = header.createEl("button", { cls: "wisemind-bridge-icon-button", text: "\xD7" });
+      const closeButton = header.createEl("button", { cls: "wisemind-sync-icon-button", text: "\xD7" });
       closeButton.title = "\u5173\u95ED";
       let settled = false;
       const finish = (value) => {
@@ -2948,16 +2948,16 @@ var WiseMindObsidianPlugin2 = class extends import_obsidian3.Plugin {
       };
       const defaultValue = this.getContextMenuDefault(target);
       let selected = options.some((item) => item.value === defaultValue) ? defaultValue : options[0]?.value || "";
-      const intro = modal.createDiv({ cls: "wisemind-bridge-tutorial-intro" });
+      const intro = modal.createDiv({ cls: "wisemind-sync-tutorial-intro" });
       intro.createEl("strong", { text: `\u4FDD\u5B58\u5230${contextMenuTargetLabel(target)}` });
       intro.createEl("span", { text: `\u9ED8\u8BA4\u9009\u4E2D\uFF1A${labelForValue(selected)}` });
       const recents = this.getContextMenuRecents(target).filter((value) => options.some((option) => option.value === value));
       if (recents.length) {
-        const recentWrap = modal.createDiv({ cls: "wisemind-bridge-context-recents" });
-        recentWrap.createEl("span", { cls: "wisemind-bridge-muted", text: "\u6700\u8FD1\u4FDD\u5B58\u7684\u6587\u4EF6\u5939" });
-        const badges = recentWrap.createDiv({ cls: "wisemind-bridge-badges" });
+        const recentWrap = modal.createDiv({ cls: "wisemind-sync-context-recents" });
+        recentWrap.createEl("span", { cls: "wisemind-sync-muted", text: "\u6700\u8FD1\u4FDD\u5B58\u7684\u6587\u4EF6\u5939" });
+        const badges = recentWrap.createDiv({ cls: "wisemind-sync-badges" });
         recents.forEach((value) => {
-          const badge = badges.createEl("button", { cls: "wisemind-bridge-badge-soft badge-soft", text: labelForValue(value) });
+          const badge = badges.createEl("button", { cls: "wisemind-sync-badge-soft badge-soft", text: labelForValue(value) });
           badge.onclick = (event) => {
             event.preventDefault();
             selected = value;
@@ -2965,12 +2965,12 @@ var WiseMindObsidianPlugin2 = class extends import_obsidian3.Plugin {
           };
         });
       }
-      const list = modal.createDiv({ cls: "wisemind-bridge-context-target-list" });
+      const list = modal.createDiv({ cls: "wisemind-sync-context-target-list" });
       const renderOptions = () => {
         list.empty();
         options.forEach((option) => {
-          const row = list.createEl("label", { cls: "wisemind-bridge-row" });
-          const left = row.createEl("span", { cls: "wisemind-bridge-row-main" });
+          const row = list.createEl("label", { cls: "wisemind-sync-row" });
+          const left = row.createEl("span", { cls: "wisemind-sync-row-main" });
           const radio = left.createEl("input");
           radio.type = "radio";
           radio.name = "wisemind-context-target";
@@ -2978,15 +2978,15 @@ var WiseMindObsidianPlugin2 = class extends import_obsidian3.Plugin {
           radio.onchange = () => {
             selected = option.value;
           };
-          left.createEl("span", { cls: "wisemind-bridge-row-title", text: option.title });
-          row.createEl("span", { cls: "wisemind-bridge-muted wisemind-bridge-row-meta", text: contextMenuTargetLabel(target) });
+          left.createEl("span", { cls: "wisemind-sync-row-title", text: option.title });
+          row.createEl("span", { cls: "wisemind-sync-muted wisemind-sync-row-meta", text: contextMenuTargetLabel(target) });
         });
       };
       renderOptions();
-      const actions = modal.createDiv({ cls: "wisemind-bridge-dialog-actions" });
-      const cancel = actions.createEl("button", { cls: "wisemind-bridge-text-button", text: "\u53D6\u6D88" });
+      const actions = modal.createDiv({ cls: "wisemind-sync-dialog-actions" });
+      const cancel = actions.createEl("button", { cls: "wisemind-sync-text-button", text: "\u53D6\u6D88" });
       cancel.onclick = () => finish(null);
-      const confirm = actions.createEl("button", { cls: "wisemind-bridge-text-button", text: "\u53D1\u9001" });
+      const confirm = actions.createEl("button", { cls: "wisemind-sync-text-button", text: "\u53D1\u9001" });
       confirm.onclick = () => {
         const option = options.find((item) => item.value === selected) || options[0];
         finish(option ? { target, value: option.value, title: option.title } : null);
