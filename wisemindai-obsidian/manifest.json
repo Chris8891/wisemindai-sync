@@ -1,6 +1,6 @@
 {
   "id": "wisemindai-obsidian",
-  "name": "WiseMindAI Obsidian",
+  "name": "WiseMindAI",
   "version": "0.1.0",
   "minAppVersion": "1.5.0",
   "description": "在 Obsidian 和 WiseMindAI 之间双向导入、同步笔记、文档和知识库内容。",
