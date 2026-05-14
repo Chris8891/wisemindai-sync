@@ -1,0 +1,891 @@
+.wisemind-bridge-view {
+  container-type: inline-size;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px;
+  color: var(--text-normal);
+  font-size: 13px;
+}
+
+.wisemind-bridge-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.wisemind-bridge-header > div:not(.wisemind-bridge-plan-controls) {
+  min-width: 0;
+}
+
+.wisemind-bridge-header h2 {
+  margin: 0 0 4px;
+  font-size: 21px;
+  line-height: 1.2;
+}
+
+.wisemind-bridge-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  color: var(--text-normal);
+  flex: 0 0 auto;
+}
+
+.wisemind-bridge-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.wisemind-bridge-muted {
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.wisemind-bridge-header-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 6px;
+  margin-left: auto;
+}
+
+.wisemind-bridge-header-actions .wisemind-bridge-text-button {
+  white-space: nowrap;
+}
+
+.wisemind-bridge-summary {
+  display: grid;
+  grid-template-columns: minmax(220px, 0.85fr) minmax(360px, 1.15fr);
+  gap: 8px;
+}
+
+.wisemind-bridge-summary-block {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 12px;
+  background: var(--background-secondary);
+}
+
+.wisemind-bridge-summary-block > strong {
+  font-size: 13px;
+}
+
+.wisemind-bridge-summary-metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(82px, 1fr));
+  gap: 8px;
+}
+
+.wisemind-bridge-summary-metric {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.wisemind-bridge-summary-metric span {
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.wisemind-bridge-summary-metric em {
+  color: var(--text-muted);
+  font-size: 12px;
+  font-style: normal;
+}
+
+.wisemind-bridge-direction-tabs,
+.wisemind-bridge-category-tabs {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 10px;
+  background: var(--background-secondary);
+}
+
+.wisemind-bridge-category-tabs {
+  margin: 2px 10px;
+}
+
+.wisemind-bridge-tab,
+.wisemind-bridge-category-tab {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  flex: 1;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.wisemind-bridge-tab {
+  padding: 8px 10px;
+  font-size: 13px;
+}
+
+.wisemind-bridge-category-tab {
+  padding: 6px 8px;
+  font-size: 12px;
+}
+
+.wisemind-bridge-tab .wisemind-bridge-inline-icon,
+.wisemind-bridge-category-tab .wisemind-bridge-inline-icon {
+  width: 16px;
+  height: 16px;
+}
+
+.wisemind-bridge-category-tab .wisemind-bridge-inline-icon {
+  width: 14px;
+  height: 14px;
+}
+
+.wisemind-bridge-inline-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  color: currentColor;
+}
+
+.wisemind-bridge-inline-icon svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.wisemind-bridge-tab.is-active,
+.wisemind-bridge-category-tab.is-active {
+  background: var(--background-primary);
+  color: var(--interactive-accent);
+  box-shadow: 0 0 0 1px var(--background-modifier-border);
+}
+
+.wisemind-bridge-toolbar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.wisemind-bridge-plan-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 10px;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 12px;
+  background: var(--background-secondary);
+}
+
+.wisemind-bridge-plan-label {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 180px;
+}
+
+.wisemind-bridge-plan-controls {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.wisemind-bridge-select,
+.wisemind-bridge-plan-name {
+  min-width: 180px;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 8px;
+  background: var(--background-primary);
+  color: var(--text-normal);
+  padding: 5px 8px;
+}
+
+.wisemind-bridge-search {
+  margin: 8px 10px 0;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 8px;
+  background: var(--background-primary);
+  color: var(--text-normal);
+  padding: 5px 8px;
+}
+
+.wisemind-bridge-button,
+.wisemind-bridge-text-button,
+.wisemind-bridge-icon-button {
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 8px;
+  background: var(--background-primary);
+  color: var(--text-normal);
+  cursor: pointer;
+  box-shadow: none;
+}
+
+.wisemind-bridge-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 6px 12px;
+  font-weight: 600;
+}
+
+.wisemind-bridge-button.is-primary {
+  min-width: 140px;
+  border-color: var(--interactive-accent);
+  background: var(--interactive-accent);
+  color: var(--text-on-accent);
+}
+
+.wisemind-bridge-text-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 3px 8px;
+  font-size: 12px;
+}
+
+.wisemind-bridge-button .wisemind-bridge-inline-icon,
+.wisemind-bridge-text-button .wisemind-bridge-inline-icon {
+  width: 14px;
+  height: 14px;
+}
+
+.wisemind-bridge-icon-button {
+  flex: 0 0 auto;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  font-size: 12px;
+}
+
+.wisemind-bridge-icon-button .wisemind-bridge-inline-icon {
+  width: 14px;
+  height: 14px;
+}
+
+.wisemind-bridge-flow {
+  display: grid;
+  grid-template-columns: minmax(320px, 1fr) 38px minmax(320px, 1fr);
+  gap: 8px;
+  align-items: stretch;
+}
+
+.wisemind-bridge-panel {
+  display: flex;
+  flex-direction: column;
+  min-height: 390px;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--background-primary);
+}
+
+.wisemind-bridge-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 9px 10px;
+  border-bottom: 1px solid var(--background-modifier-border);
+  background: var(--background-secondary);
+}
+
+.wisemind-bridge-panel-header > div:first-child {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.wisemind-bridge-panel-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+}
+
+.wisemind-bridge-panel-count {
+  color: var(--text-muted);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.wisemind-bridge-panel-header strong {
+  font-size: 14px;
+}
+
+.wisemind-bridge-list {
+  flex: 1;
+  max-height: 470px;
+  overflow: auto;
+  padding: 6px;
+}
+
+.wisemind-bridge-list-to-obsidian {
+  max-height: 512px;
+}
+
+.wisemind-bridge-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 390px;
+}
+
+.wisemind-bridge-arrow .wisemind-bridge-inline-icon {
+  width: 30px;
+  height: 30px;
+  color: var(--interactive-accent);
+}
+
+.wisemind-bridge-execute {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding-top: 2px;
+}
+
+.wisemind-bridge-overwrite-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.wisemind-bridge-group-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.wisemind-bridge-tree-group {
+  border-bottom: 1px solid var(--background-modifier-border);
+  padding: 2px 0;
+}
+
+.wisemind-bridge-tree-group:last-child {
+  border-bottom: 0;
+}
+
+.wisemind-bridge-tree-header,
+.wisemind-bridge-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.wisemind-bridge-tree-header {
+  padding: 5px 6px;
+  border-radius: 8px;
+}
+
+.wisemind-bridge-tree-header:hover,
+.wisemind-bridge-row:hover {
+  background: var(--background-secondary);
+}
+
+.wisemind-bridge-tree-title {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.wisemind-bridge-tree-count {
+  margin-left: auto;
+  white-space: nowrap;
+}
+
+.wisemind-bridge-tree-title strong,
+.wisemind-bridge-row-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.wisemind-bridge-tree-children {
+  margin-left: 28px;
+  padding: 1px 0 5px;
+}
+
+.wisemind-bridge-row {
+  justify-content: space-between;
+  padding: 5px 6px;
+  border-radius: 8px;
+}
+
+.wisemind-bridge-row.is-plain {
+  justify-content: flex-start;
+  color: var(--text-muted);
+}
+
+.wisemind-bridge-row-main {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.wisemind-bridge-row-meta {
+  flex: 0 0 auto;
+  max-width: 46%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.wisemind-bridge-empty {
+  padding: 12px;
+  border: 1px dashed var(--background-modifier-border);
+  border-radius: 10px;
+  background: var(--background-secondary);
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.wisemind-bridge-connection-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 160px;
+  text-align: center;
+}
+
+.wisemind-bridge-connection-empty strong {
+  color: var(--text-normal);
+  font-size: 13px;
+}
+
+.wisemind-bridge-connection-empty p {
+  margin: 0;
+}
+
+.wisemind-bridge-connection-empty a {
+  color: var(--interactive-accent);
+  text-decoration: none;
+}
+
+.wisemind-bridge-target-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px;
+}
+
+.wisemind-bridge-create-folder {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 6px 8px;
+}
+
+.wisemind-bridge-create-folder .wisemind-bridge-search {
+  flex: 1;
+  margin: 0;
+}
+
+@media (max-width: 980px) {
+  .wisemind-bridge-summary,
+  .wisemind-bridge-flow {
+    grid-template-columns: 1fr;
+  }
+
+  .wisemind-bridge-plan-bar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .wisemind-bridge-plan-controls {
+    justify-content: flex-start;
+  }
+
+  .wisemind-bridge-arrow {
+    min-height: 32px;
+  }
+
+  .wisemind-bridge-panel {
+    min-height: 360px;
+  }
+}
+
+@container (max-width: 760px) {
+  .wisemind-bridge-header {
+    align-items: flex-start;
+  }
+
+  .wisemind-bridge-header-actions {
+    justify-content: flex-start;
+    margin-left: 0;
+  }
+
+  .wisemind-bridge-summary,
+  .wisemind-bridge-flow {
+    grid-template-columns: 1fr;
+  }
+
+  .wisemind-bridge-direction-tabs,
+  .wisemind-bridge-category-tabs,
+  .wisemind-bridge-plan-bar,
+  .wisemind-bridge-toolbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .wisemind-bridge-plan-controls {
+    justify-content: flex-start;
+  }
+
+  .wisemind-bridge-select,
+  .wisemind-bridge-plan-name {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .wisemind-bridge-panel {
+    min-height: 300px;
+  }
+
+  .wisemind-bridge-list {
+    max-height: 360px;
+  }
+
+  .wisemind-bridge-arrow {
+    min-height: 28px;
+  }
+
+  .wisemind-bridge-arrow .wisemind-bridge-inline-icon {
+    transform: rotate(90deg);
+  }
+
+  .wisemind-bridge-panel-header,
+  .wisemind-bridge-tree-header,
+  .wisemind-bridge-row {
+    align-items: flex-start;
+  }
+
+  .wisemind-bridge-panel-right {
+    margin-left: 0;
+  }
+
+  .wisemind-bridge-row-meta {
+    max-width: 40%;
+  }
+
+  .wisemind-bridge-tutorial-steps {
+    grid-template-columns: 1fr;
+  }
+}
+
+.wisemind-bridge-history-modal {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: min(880px, calc(100vw - 32px));
+  max-height: 72vh;
+  overflow: hidden;
+  padding: 14px;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 12px;
+  background: var(--background-primary);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
+}
+
+.wisemind-bridge-dialog {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: min(520px, calc(100vw - 32px));
+  max-height: 72vh;
+  overflow: auto;
+  padding: 14px;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 12px;
+  background: var(--background-primary);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
+}
+
+.wisemind-bridge-tutorial-dialog {
+  width: min(680px, calc(100vw - 32px));
+}
+
+.wisemind-bridge-tutorial-tabs {
+  margin: 0;
+}
+
+.wisemind-bridge-tutorial-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.wisemind-bridge-api-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.wisemind-bridge-context-dialog,
+.wisemind-bridge-context-settings-dialog {
+  width: min(640px, calc(100vw - 32px));
+}
+
+.wisemind-bridge-context-settings,
+.wisemind-bridge-context-recents {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.wisemind-bridge-context-select-row {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+  padding: 10px;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 10px;
+  background: var(--background-secondary);
+}
+
+.wisemind-bridge-context-select-row .wisemind-bridge-select {
+  width: 100%;
+  min-width: 0;
+  justify-self: stretch;
+}
+
+.wisemind-bridge-context-section-header {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.wisemind-bridge-context-target-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-height: 260px;
+  overflow: auto;
+}
+
+.wisemind-bridge-context-target-list .wisemind-bridge-row {
+  background: var(--background-primary);
+}
+
+.wisemind-bridge-context-recents .wisemind-bridge-badge-soft {
+  cursor: pointer;
+}
+
+@container (max-width: 760px) {
+  .wisemind-bridge-context-select-row {
+    grid-template-columns: 1fr;
+    align-items: stretch;
+  }
+}
+
+.wisemind-bridge-tutorial-intro,
+.wisemind-bridge-tutorial-step {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 10px;
+  background: var(--background-secondary);
+}
+
+.wisemind-bridge-tutorial-intro span,
+.wisemind-bridge-tutorial-step span {
+  color: var(--text-muted);
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.wisemind-bridge-tutorial-steps {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.wisemind-bridge-history-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.36);
+}
+
+.wisemind-bridge-history-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.wisemind-bridge-history-title h2 {
+  margin: 0;
+}
+
+.wisemind-bridge-history-card {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 8px 10px;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 10px;
+  background: var(--background-secondary);
+}
+
+.wisemind-bridge-history-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.wisemind-bridge-history-header span,
+.wisemind-bridge-history-line > span {
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.wisemind-bridge-history-tabs {
+  flex: 0 0 auto;
+}
+
+.wisemind-bridge-history-tools {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.wisemind-bridge-history-tools .wisemind-bridge-search {
+  flex: 1;
+  margin: 0;
+}
+
+.wisemind-bridge-history-list-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow: auto;
+  padding-right: 2px;
+}
+
+.wisemind-bridge-history-line {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr);
+  align-items: start;
+  gap: 8px;
+}
+
+.wisemind-bridge-summary-row {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.wisemind-bridge-summary-row > span {
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.wisemind-bridge-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.wisemind-bridge-badge-soft {
+  max-width: 100%;
+  overflow: hidden;
+  padding: 3px 8px;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 999px;
+  background: var(--background-secondary);
+  color: var(--text-normal);
+  font-size: 12px;
+  line-height: 1.4;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.wisemind-bridge-badge-soft.is-primary {
+  border-color: var(--interactive-accent);
+  background: var(--interactive-accent);
+  color: var(--text-on-accent);
+}
+
+.wisemind-bridge-plan-list,
+.wisemind-bridge-plan-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.wisemind-bridge-plan-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.wisemind-bridge-plan-row-actions {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-left: auto;
+}
+
+.wisemind-bridge-plan-row:hover {
+  background: var(--background-secondary);
+}
+
+.wisemind-bridge-plan-row-text {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.wisemind-bridge-plan-title-line {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.wisemind-bridge-dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  flex-wrap: wrap;
+}
