@@ -148,16 +148,16 @@ var runObsidianToWiseMindImport = async (options) => {
             const payload = {
               knowledgeBaseId: normalizeRemoteId(knowledgeBaseId),
               title: item.title,
-              content: markdown,
-              summary: `Imported from Obsidian: ${item.path}`,
+              content: null,
+              summary: "",
               fileUrl: sourcePath,
               fileType: "md",
               fileExt: "md",
-              type: "input",
+              type: "upload",
               sourceId: 0,
               size: item.size,
-              loadingStatus: 0,
-              embeddingStatus: 0
+              loadingStatus: null,
+              embeddingStatus: null
             };
             const existing = options.duplicatePolicy === "update" ? await findExistingKnowledgeDocument(options.api, item.title, baseId) : null;
             if (existing) {
@@ -600,9 +600,9 @@ var WiseMindApiClient = class {
   async resolveKnowledgeBase(name, extra = {}) {
     return this.postData("/api/v2/knowledge-bases/resolve", { name, ...extra });
   }
-  async listKnowledgeDocuments(knowledgeBaseId, q) {
+  async listKnowledgeDocuments(knowledgeBaseId, q, limit) {
     return this.getData(
-      `/api/v2/knowledge-documents${toQuery({ knowledgeBaseId, q })}`
+      `/api/v2/knowledge-documents${toQuery({ knowledgeBaseId, q, limit })}`
     );
   }
   async getKnowledgeDocument(id) {
@@ -626,7 +626,7 @@ var WiseMindApiClient = class {
       this.listKnowledgeBases()
     ]);
     const knowledgeDocumentsNested = await Promise.all(
-      knowledgeBases.map((base) => this.listKnowledgeDocuments(base.id).catch(() => []))
+      knowledgeBases.map((base) => this.listKnowledgeDocuments(base.id, void 0, 5e3).catch(() => []))
     );
     return {
       notes,
@@ -723,7 +723,10 @@ var loadWiseMindSources = async (api, options) => {
   if (options.includeKnowledgeDocuments) {
     for (const knowledgeDocument of snapshot.knowledgeDocuments.filter(isMarkdownRecord)) {
       const base = snapshot.knowledgeBases.find((item) => String(item.id) === String(knowledgeDocument.knowledgeBaseId));
-      items.push(await normalizeWiseMindKnowledgeDocument(knowledgeDocument, base));
+      const detail = hasKnowledgeDocumentContent(knowledgeDocument) ? knowledgeDocument : await api.getKnowledgeDocument(knowledgeDocument.id).catch(() => knowledgeDocument);
+      const normalized = await normalizeWiseMindKnowledgeDocument({ ...knowledgeDocument, ...detail }, base);
+      if (normalized.markdown.trim() || isKnowledgeMarkdownUploadRecord(normalized.raw))
+        items.push(normalized);
     }
   }
   return { snapshot, items };
@@ -764,7 +767,7 @@ var normalizeWiseMindDocument = async (doc, folders = []) => {
 };
 var hasDocumentBody = (doc) => Boolean(firstText(doc?.content, doc?.md, doc?.markdown, doc?.note, doc?.summary));
 var normalizeWiseMindKnowledgeDocument = async (doc, base) => {
-  const markdown = stripSourceMarkers(firstText(doc.content, doc.summary));
+  const markdown = stripSourceMarkers(firstText(doc.content, doc.md, doc.markdown, doc.note, doc.text, doc.summary));
   const knowledgeBaseName = firstText(base?.name, `knowledge-${doc.knowledgeBaseId}`);
   const title = firstText(doc.title, `knowledge-document-${doc.id}`);
   return {
@@ -781,6 +784,8 @@ var normalizeWiseMindKnowledgeDocument = async (doc, base) => {
     raw: doc
   };
 };
+var hasKnowledgeDocumentContent = (doc) => Boolean(firstText(doc?.content, doc?.md, doc?.markdown, doc?.note, doc?.text));
+var isKnowledgeMarkdownUploadRecord = (doc) => String(doc?.type || "").toLowerCase() === "upload" && isMarkdownRecord(doc);
 var resolveFolderPath = (folderId, folders) => {
   if (folderId === void 0 || folderId === null || folderId === "")
     return "";
@@ -1851,7 +1856,7 @@ var WiseMindSyncView = class extends import_obsidian2.ItemView {
       }
     );
     const titleWrap = document.createElement("div");
-    titleWrap.className = "wisemind-sync-tree-title";
+    titleWrap.className = "wisemind-sync-tree-title wisemind-sync-destination-title";
     titleWrap.createEl("strong", { text: group.title });
     titleWrap.createEl("span", { cls: "wisemind-sync-muted", text: group.subtitle });
     header.append(expandButton, titleWrap);

@@ -411,6 +411,18 @@
   min-width: 0;
 }
 
+.wisemind-sync-destination-title {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.wisemind-sync-destination-title .wisemind-sync-muted {
+  margin-left: auto;
+  white-space: nowrap;
+}
+
 .wisemind-sync-tree-count {
   margin-left: auto;
   white-space: nowrap;
